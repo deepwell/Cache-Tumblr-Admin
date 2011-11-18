@@ -22,7 +22,6 @@ class tumblrCacheTask extends sfBaseTask
     $blog_name = sfConfig::get('app_tumblr_blog_name');
     $email = sfConfig::get('app_tumblr_email');
     $password = sfConfig::get('app_tumblr_password');
-    $cache_directory = sfConfig::get('sf_upload_dir');
 
     // sanity check
     if (empty($blog_name) || empty($email) || empty($password))
@@ -32,26 +31,29 @@ class tumblrCacheTask extends sfBaseTask
       return;
     }
 
-    // Run
+    // run
     $b = new sfWebBrowser(array(), 'sfCurlAdapter', array('cookies' => true));
 
-    // Login
+    // login
     echo "Attempting to login...\n";
-    $res = $b->post('https://www.tumblr.com/login', array('email'=>$email, 'password'=>$password));
-    if ($res->responseIsError())
+    $result = $b->post('https://www.tumblr.com/login', array('email'=>$email, 'password'=>$password));
+    if ($result->responseIsError())
     {
       echo "Login Failed\n";
     }
 
-    // get the blog
-    $blog = $b->get('http://www.tumblr.com/blog/'.$blog_name);
-
     // cache to a file
-    $filename = $cache_directory.DIRECTORY_SEPARATOR.$blog_name.'-'.date('Y-m-d_H:i:s').'.html';
-    if (!file_put_contents($filename, $blog->getResponseText()))
+    $blog = $b->get('http://www.tumblr.com/blog/'.$blog_name);
+    if (CachedFiles::saveFile($blog_name, $blog->getResponseText()))
     {
-      echo "Failed to save cache file\n";
+      echo "Saved file\n";
     }
+    else
+    {
+      echo "Failed to save file\n";
+    }
+
+    CachedFiles::removeOld();
 
     echo "Done\n";
   }

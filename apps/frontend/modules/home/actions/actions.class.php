@@ -17,24 +17,9 @@ class homeActions extends sfActions
   */
   public function executeIndex(sfWebRequest $request)
   {
-    // get list of files
-    $files = array();
-    $upload_directory = sfConfig::get('sf_upload_dir');
-    if ($handle = opendir($upload_directory))
-    {
-      while (false !== ($file = readdir($handle)))
-      {
-        if (substr($file, -4) == 'html')
-        {
-          $files[] = $file;
-        }
-      }
-      closedir($handle);
-    }
-
+    $files = CachedFiles::getFileNames();
     // sort by newest on top
     rsort($files);
-
     $this->files = $files;
   }
 }
