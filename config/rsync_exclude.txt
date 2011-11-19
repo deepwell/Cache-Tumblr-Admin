@@ -1,5 +1,6 @@
 # Project files
 /cache/*
+/data/sfWebBrowserPlugin/sfCurlAdapter/*
 /log/*
 /web/*_dev.php
 /web/uploads/*
