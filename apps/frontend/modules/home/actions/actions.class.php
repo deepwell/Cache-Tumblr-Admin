@@ -22,4 +22,23 @@ class homeActions extends sfActions
     rsort($files);
     $this->files = $files;
   }
+
+ /**
+  * Delete a cached file
+  *
+  * @param sfRequest $request A request object
+  */
+  public function executeDeletefile(sfWebRequest $request)
+  {
+    $file = isset($_POST['file']) ? $_POST['file'] : null;
+    if (CachedFiles::delete($file))
+    {
+      return $this->renderText(json_encode(array('true')));
+    }
+    else
+    {
+      $this->getResponse()->setStatusCode(403);
+      return sfView::NONE;
+    }
+  }
 }

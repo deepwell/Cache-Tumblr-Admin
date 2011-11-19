@@ -27,7 +27,7 @@ class CachedFiles
 
   /**
    * Save contents to a cached file.
-   * @boolean true if successful
+   * @return boolean true if successful
    */
   public static function saveFile($name, $content)
   {
@@ -70,6 +70,25 @@ class CachedFiles
           unlink($filename);
         }
       }
+    }
+  }
+
+  /**
+   * Delete a cached file.
+   * @return boolean
+   */
+  public static function delete($file)
+  {
+    $cache_directory = sfConfig::get('sf_upload_dir');
+    $filename = $cache_directory.DIRECTORY_SEPARATOR.$file;
+    if (file_exists($filename))
+    {
+      unlink($filename);
+      return true;
+    }
+    else
+    {
+      return false;
     }
   }
 }
